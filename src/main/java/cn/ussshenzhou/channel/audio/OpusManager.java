@@ -23,10 +23,17 @@ public class OpusManager {
     private static Encoder encoder;
     private static HashMap<UUID, Decoder> decoders = new HashMap<>();
     public static final TimeCounter SEND_SPEED = new TimeCounter(1000);
+    private static int encoderBitrate = -1;
 
     public static byte[] encode(byte[] audio, int sampleRate) throws OpusException {
         if (encoder == null || encoder.sampleRate != sampleRate) {
             encoder = new Encoder(sampleRate, new OpusEncoder(sampleRate, 1, sampleRate <= 16000 ? OpusApplication.OPUS_APPLICATION_VOIP : OpusApplication.OPUS_APPLICATION_AUDIO));
+            encoderBitrate = -1;
+        }
+        int actualBitrate = UploadBitrateController.getActualBitrateBps();
+        if (actualBitrate > 0 && actualBitrate != encoderBitrate) {
+            encoder.encoder.setBitrate(actualBitrate);
+            encoderBitrate = actualBitrate;
         }
         byte[] result = new byte[audio.length];
         var length = encoder.encoder.encode(audio, 0, audio.length / 2, result, 0, result.length);

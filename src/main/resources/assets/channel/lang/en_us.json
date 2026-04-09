@@ -79,6 +79,10 @@
   "channel.config.net.samplerate": "Transmission Sample Rate (Hz)",
   "channel.config.net.samplerate.tooltip": "Determines the quality of the transmitted sound.\nThe highest sound frequency that can be transmitted is half of the sample rate.\nA lower sample rate helps reduce network usage,\nwhile a higher sample rate helps improve audio quality.",
   "channel.config.net.bitrate": "Bitrate (kbps)",
+  "channel.config.net.bitrate.user": "User Target",
+  "channel.config.net.bitrate.server": "Server Limit",
+  "channel.config.net.bitrate.actual": "Actual",
+  "channel.config.net.bitrate.unlimited": "Unlimited",
   "channel.config.net.flow": "Compressed Upload Rate",
 
   "channel.config.tab.output": "Output",
@@ -107,5 +111,7 @@
   "channel.notify.failed_find": "Device %1$s not found.\nThe default input device is used.",
   "channel.notify.no_valid": "No input device available.",
   "channel.notify.unsupported": "The selected parameters are not supported by this input device.",
-  "channel.notify.failed_init": "Failed to initialize device %1$s."
+  "channel.notify.failed_init": "Failed to initialize device %1$s.",
+  "channel.notify.bitrate.warn": "Upload bitrate exceeds the server quota. Please lower your target bitrate.",
+  "channel.notify.bitrate.drop": "Upload bitrate is still over quota. Voice packets are temporarily dropped."
 }

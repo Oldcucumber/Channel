@@ -79,6 +79,10 @@
   "channel.config.net.samplerate": "传输采样率(Hz)",
   "channel.config.net.samplerate.tooltip": "决定传输声音的质量。\n能传输的最高声音频率是采样率的一半。\n较低的采样率有助于减小网络占用，\n较高的采样率有助于提高音频质量。",
   "channel.config.net.bitrate": "比特率(kbps)",
+  "channel.config.net.bitrate.user": "用户期望",
+  "channel.config.net.bitrate.server": "服务器限制",
+  "channel.config.net.bitrate.actual": "实际运行",
+  "channel.config.net.bitrate.unlimited": "无限制",
   "channel.config.net.flow": "压缩后上传速率",
 
   "channel.config.tab.output": "输出",
@@ -107,5 +111,7 @@
   "channel.notify.failed_find": "未找到设备 %1$s.\n已使用默认输入设备。",
   "channel.notify.no_valid": "无可用的输入设备。",
   "channel.notify.unsupported": "选择的参数不受此输入设备支持。",
-  "channel.notify.failed_init": "初始化设备 %1$s 失败。"
+  "channel.notify.failed_init": "初始化设备 %1$s 失败。",
+  "channel.notify.bitrate.warn": "上传码率已超过服务器配额，请降低目标码率。",
+  "channel.notify.bitrate.drop": "上传码率持续超限，语音包已被服务器临时丢弃。"
 }

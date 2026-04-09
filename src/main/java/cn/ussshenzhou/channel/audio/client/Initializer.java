@@ -4,6 +4,7 @@ import cn.ussshenzhou.channel.audio.client.receive.AudioManagerManager;
 import cn.ussshenzhou.channel.audio.client.send.MicManager;
 import cn.ussshenzhou.channel.audio.client.send.MicReader;
 import cn.ussshenzhou.channel.audio.client.send.WebRTCHelper;
+import cn.ussshenzhou.channel.audio.UploadBitrateController;
 import cn.ussshenzhou.channel.audio.nativ.NvidiaHelper;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -19,6 +20,7 @@ public class Initializer {
 
     @SubscribeEvent
     public static void init(ClientStartedEvent event) {
+        UploadBitrateController.initFromConfig();
         MicManager.init();
         MicReader.init();
         WebRTCHelper.init();
