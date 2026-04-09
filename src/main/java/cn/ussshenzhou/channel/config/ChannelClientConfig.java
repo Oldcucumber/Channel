@@ -17,6 +17,7 @@ public class ChannelClientConfig implements TConfig {
 
     public String useDevice = "";
     public float networkSampleRate = 24000;
+    public int uploadBitrateBps = 32000;
     public float micSampleRate = 48000;
     public int frameLengthMs = 20;
     public boolean listen = false;

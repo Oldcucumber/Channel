@@ -1,18 +1,18 @@
 package cn.ussshenzhou.channel.gui;
 
 import cn.ussshenzhou.channel.audio.OpusManager;
+import cn.ussshenzhou.channel.audio.UploadBitrateController;
 import cn.ussshenzhou.channel.config.ChannelClientConfig;
 import cn.ussshenzhou.channel.util.ModConstant;
 import cn.ussshenzhou.t88.config.ConfigHelper;
 import cn.ussshenzhou.t88.gui.advanced.TOptionsPanel;
 import cn.ussshenzhou.t88.gui.widegt.TLabel;
+import cn.ussshenzhou.t88.gui.widegt.TSlider;
 import cn.ussshenzhou.t88.util.T88Config;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.network.chat.Component;
 
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -22,6 +22,9 @@ import java.util.stream.Stream;
 public class TransmitConfigPanel extends TOptionsPanel {
     private TLabel bitrate;
     private TLabel speed;
+    private TLabel serverLimit;
+    private TLabel actualBitrate;
+    private TSlider bitrateSlider;
     private int life = 0;
 
     public TransmitConfigPanel() {
@@ -39,19 +42,46 @@ public class TransmitConfigPanel extends TOptionsPanel {
                 ModConstant.USABLE_NETWORK_SAMPLE_RATE,
                 f -> _ -> {
                     ChannelClientConfig.write(c -> c.networkSampleRate = f);
-                    bitrate.setText(Component.literal(getBitRate()));
                 },
                 entry -> entry.getContent() == cfg.networkSampleRate
         ).getB();
-        bitrate = addOption(Component.translatable("channel.config.net.bitrate"), new TLabel(Component.literal(getBitRate()))).getB();
+        bitrateSlider = addOptionSlider(
+                Component.translatable("channel.config.net.bitrate"),
+                6,
+                64,
+                1,
+                slider -> {
+                    int kbps = (int) slider.getAbsValue();
+                    UploadBitrateController.setUserTargetBitrateBps(kbps * 1000);
+                    updateBitrateLabels();
+                },
+                (_, value) -> Component.literal((int) value + " kbps")
+        ).getB();
+        bitrateSlider.setAbsValue(UploadBitrateController.getUserTargetBitrateBps() / 1000f);
+        bitrate = addOption(Component.translatable("channel.config.net.bitrate.user"), new TLabel(Component.empty())).getB();
+        serverLimit = addOption(Component.translatable("channel.config.net.bitrate.server"), new TLabel(Component.empty())).getB();
+        actualBitrate = addOption(Component.translatable("channel.config.net.bitrate.actual"), new TLabel(Component.empty())).getB();
         speed = addOption(Component.translatable("channel.config.net.flow"), new TLabel(Component.empty())).getB();
         netSampleRate.setTooltip(Tooltip.create(Component.translatable("channel.config.net.samplerate.tooltip")));
+        updateBitrateLabels();
     }
 
-    private String getBitRate() {
-        var cfg = ChannelClientConfig.get();
+    private void updateBitrateLabels() {
+        bitrate.setText(Component.literal(getBitRate(UploadBitrateController.getUserTargetBitrateBps())));
+        serverLimit.setText(Component.literal(getServerLimit()));
+        actualBitrate.setText(Component.literal(getBitRate(UploadBitrateController.getActualBitrateBps())));
+    }
+
+    private String getServerLimit() {
+        if (!UploadBitrateController.isServerLimitBounded()) {
+            return Component.translatable("channel.config.net.bitrate.unlimited").getString();
+        }
+        return getBitRate(UploadBitrateController.getServerLimitBps());
+    }
+
+    private String getBitRate(int bps) {
         var df = new DecimalFormat("0.#");
-        return df.format(cfg.networkSampleRate * 16 / 1000f);
+        return df.format(bps / 1000f) + " kbps";
     }
 
     @Override
@@ -59,6 +89,7 @@ public class TransmitConfigPanel extends TOptionsPanel {
         if (life % 10 == 0) {
             OpusManager.SEND_SPEED.update();
             speed.setText(Component.literal(getReadableSize(OpusManager.SEND_SPEED.averageIn1s())));
+            updateBitrateLabels();
         }
         life++;
         super.tickT();
